@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pc.name }} - BuildWise</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    <style>
+        /* Scoped styles for the Pre-Build details page only. */
+        .prebuild-details-page { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+        .prebuild-breadcrumb { font-size: .85rem; opacity: .7; margin-bottom: 1.5rem; }
+        .prebuild-breadcrumb a { color: inherit; text-decoration: none; }
+        .prebuild-breadcrumb a:hover { text-decoration: underline; }
+
+        .prebuild-detail-hero {
+            display: grid;
+            grid-template-columns: minmax(260px, 420px) 1fr;
+            gap: 2.5rem;
+            align-items: start;
+            margin-bottom: 2.5rem;
+        }
+        .prebuild-detail-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            object-fit: cover;
+            background: rgba(127, 127, 127, 0.12);
+        }
+        .prebuild-detail-image-placeholder {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(127, 127, 127, 0.12);
+            opacity: .6;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .prebuild-detail-tag {
+            display: inline-block;
+            font-size: .75rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: #b8860b;
+            background: rgba(247, 201, 72, 0.15);
+            border: 1px solid rgba(247, 201, 72, 0.4);
+            border-radius: 999px;
+            padding: .25rem .75rem;
+            margin-bottom: .75rem;
+        }
+        .prebuild-detail-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin: 0 0 .75rem;
+        }
+        .prebuild-detail-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+        .prebuild-detail-stock { font-size: .9rem; margin-bottom: 1.25rem; }
+        .prebuild-detail-stock.in { color: #2e8b57; }
+        .prebuild-detail-stock.out { color: #c0392b; }
+        .prebuild-detail-desc { line-height: 1.6; margin-bottom: 1.5rem; opacity: .9; }
+        .prebuild-detail-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+
+        .prebuild-spec-section h2, .prebuild-related h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+        }
+        .prebuild-spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .prebuild-spec-item {
+            border: 1px solid rgba(127, 127, 127, 0.25);
+            border-radius: 10px;
+            padding: .9rem 1.1rem;
+        }
+        .prebuild-spec-label {
+            display: block;
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            opacity: .6;
+            margin-bottom: .25rem;
+        }
+        .prebuild-spec-value { font-weight: 600; }
+
+        .prebuild-related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 720px) {
+            .prebuild-detail-hero { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            <svg class="logo-mark" viewBox="0 0 40 40" fill="none">
+                <path d="M20 2 L36 11 V29 L20 38 L4 29 V11 Z" stroke="#f7c948" stroke-width="2.5"/>
+                <path d="M20 12 L28 16.5 V25.5 L20 30 L12 25.5 V16.5 Z" fill="#f7c948"/>
+            </svg>
+            <span class="logo-text">Build<span class="accent">Wise</span></span>
+        </a>
+        <nav class="nav-pill">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'prebuild' %}" class="active">Pre-Build</a>
+            <a href="{% url 'my_configuration' %}">My Configuration</a>
+            <a href="{% url 'accessories' %}">Accessories</a>
+            <a href="{% url 'about' %}">About</a>
+        </nav>
+        <div class="nav-auth">
+                        <a href="{% url 'wishlist' %}" class="cart-icon-link" aria-label="View wishlist">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 20.2s-7.2-4.4-9.7-8.9C.7 7.7 2.4 4 6 4c2.1 0 3.5 1.2 4.3 2.3C11.1 5.2 12.5 4 14.6 4c3.6 0 5.3 3.7 3.7 7.3-2.5 4.5-9.7 8.9-9.7 8.9z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {% if wishlist_count %}<span class="cart-badge">{{ wishlist_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'view_cart' %}" class="cart-icon-link" aria-label="View cart">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3h2.2l1 2M5.2 5H21l-2 8H7.4M5.2 5l1.7 8M7.4 13l-.6 2.4A1 1 0 007.7 17H19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9" cy="20" r="1.4" fill="currentColor"/>
+                    <circle cx="18" cy="20" r="1.4" fill="currentColor"/>
+                </svg>
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'order_history' %}" class="btn-ghost">My Orders</a>
+                <a href="{% url 'profile' %}" class="btn-ghost">Hi, {{ request.user.username }}</a>
+                <a href="{% url 'logout' %}" class="btn-fill">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-fill">Login / Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <div class="prebuild-details-page">
+
+            <p class="prebuild-breadcrumb">
+                <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp;
+                <a href="{% url 'prebuild' %}">Pre-Build</a> &nbsp;/&nbsp;
+                {{ pc.name }}
+            </p>
+
+            <section class="prebuild-detail-hero">
+                {% if pc.image %}
+                    <img src="{{ pc.image.url }}" alt="{{ pc.name }}" class="prebuild-detail-image">
+                {% else %}
+                    <div class="prebuild-detail-image-placeholder">PC Visual</div>
+                {% endif %}
+
+                <div>
+                    <span class="prebuild-detail-tag">{{ pc.get_category_display }}</span>
+                    <h1>{{ pc.name }}</h1>
+                    <p class="prebuild-detail-price">₹ {{ pc.price_display }}</p>
+
+                    {% if pc.stock > 0 %}
+                        <p class="prebuild-detail-stock in">In Stock &middot; {{ pc.stock }} available</p>
+                    {% else %}
+                        <p class="prebuild-detail-stock out">Currently Out of Stock</p>
+                    {% endif %}
+
+                    <p class="prebuild-detail-desc">{{ pc.description|linebreaksbr }}</p>
+                    <div class="prebuild-detail-actions">
+                        <form method="post" action="{% url 'add_prebuilt_to_cart' pc.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn primary-btn" {% if pc.stock <= 0 %}disabled{% endif %}>
+                                {% if pc.stock <= 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+                            </button>
+                        </form>
+                        {% if pc.wishlist_item_id %}
+                        <form method="post" action="{% url 'remove_from_wishlist' pc.wishlist_item_id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn-ghost">&#9829; Remove from Wishlist</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'add_prebuilt_to_wishlist' pc.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn-ghost">&#9825; Add to Wishlist</button>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'prebuild' %}" class="btn-ghost">Back to Pre-Builds</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="prebuild-spec-section">
+                <h2>Full Specifications</h2>
+                <div class="prebuild-spec-grid">
+                    {% for label, value in spec_pairs %}
+                        <div class="prebuild-spec-item">
+                            <span class="prebuild-spec-label">{{ label }}</span>
+                            <span class="prebuild-spec-value">{{ value }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% if related %}
+                <section class="prebuild-related">
+                    <h2>More in {{ pc.get_category_display }}</h2>
+                    <div class="prebuild-related-grid">
+                        {% for item in related %}
+                            <div class="product-card prebuild-card">
+                                <a href="{% url 'prebuild_details' item.id %}" class="prebuild-card-link">
+                                    {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="product-img">
+                                    {% else %}
+                                        <div class="product-img product-img-placeholder"></div>
+                                    {% endif %}
+                                </a>
+                                <div class="product-info">
+                                    <p class="product-brand">BUILDWISE</p>
+                                    <h3 class="product-name">{{ item.name }}</h3>
+                                    <div class="product-footer">
+                                        <span class="product-price">₹ {{ item.price_display }}</span>
+                                        <a href="{% url 'prebuild_details' item.id %}" class="btn-ghost product-add-btn">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 BuildWise. All Rights Reserved.</p>
+    </footer>
+
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

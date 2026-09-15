@@ -1,0 +1,230 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ accessory.name }} - BuildWise</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    <style>
+        /* Scoped styles for the Accessory details page only — mirrors the
+           Pre-Build details page's layout with its own class names. */
+        .accessory-details-page { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+        .accessory-breadcrumb { font-size: .85rem; opacity: .7; margin-bottom: 1.5rem; }
+        .accessory-breadcrumb a { color: inherit; text-decoration: none; }
+        .accessory-breadcrumb a:hover { text-decoration: underline; }
+
+        .accessory-detail-hero {
+            display: grid;
+            grid-template-columns: minmax(260px, 420px) 1fr;
+            gap: 2.5rem;
+            align-items: start;
+            margin-bottom: 2.5rem;
+        }
+        .accessory-detail-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            object-fit: cover;
+            background: rgba(127, 127, 127, 0.12);
+        }
+        .accessory-detail-image-placeholder {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(127, 127, 127, 0.12);
+            font-size: 64px;
+        }
+        .accessory-detail-tag {
+            display: inline-block;
+            font-size: .75rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: #b8860b;
+            background: rgba(247, 201, 72, 0.15);
+            border: 1px solid rgba(247, 201, 72, 0.4);
+            border-radius: 999px;
+            padding: .25rem .75rem;
+            margin-bottom: .75rem;
+        }
+        .accessory-detail-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin: 0 0 .35rem;
+        }
+        .accessory-detail-brand { opacity: .7; margin-bottom: .75rem; }
+        .accessory-detail-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+        .accessory-detail-stock { font-size: .9rem; margin-bottom: 1.25rem; }
+        .accessory-detail-stock.in { color: #2e8b57; }
+        .accessory-detail-stock.out { color: #c0392b; }
+        .accessory-detail-desc { line-height: 1.6; margin-bottom: 1.5rem; opacity: .9; }
+        .accessory-detail-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+
+        .accessory-related h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+        }
+        .accessory-related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 720px) {
+            .accessory-detail-hero { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            <svg class="logo-mark" viewBox="0 0 40 40" fill="none">
+                <path d="M20 2 L36 11 V29 L20 38 L4 29 V11 Z" stroke="#f7c948" stroke-width="2.5"/>
+                <path d="M20 12 L28 16.5 V25.5 L20 30 L12 25.5 V16.5 Z" fill="#f7c948"/>
+            </svg>
+            <span class="logo-text">Build<span class="accent">Wise</span></span>
+        </a>
+        <nav class="nav-pill">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'prebuild' %}">Pre-Build</a>
+            <a href="{% url 'my_configuration' %}">My Configuration</a>
+            <a href="{% url 'accessories' %}" class="active">Accessories</a>
+            <a href="{% url 'about' %}">About</a>
+        </nav>
+        <div class="nav-auth">
+                        <a href="{% url 'wishlist' %}" class="cart-icon-link" aria-label="View wishlist">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 20.2s-7.2-4.4-9.7-8.9C.7 7.7 2.4 4 6 4c2.1 0 3.5 1.2 4.3 2.3C11.1 5.2 12.5 4 14.6 4c3.6 0 5.3 3.7 3.7 7.3-2.5 4.5-9.7 8.9-9.7 8.9z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {% if wishlist_count %}<span class="cart-badge">{{ wishlist_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'view_cart' %}" class="cart-icon-link" aria-label="View cart">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3h2.2l1 2M5.2 5H21l-2 8H7.4M5.2 5l1.7 8M7.4 13l-.6 2.4A1 1 0 007.7 17H19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9" cy="20" r="1.4" fill="currentColor"/>
+                    <circle cx="18" cy="20" r="1.4" fill="currentColor"/>
+                </svg>
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'order_history' %}" class="btn-ghost">My Orders</a>
+                <a href="{% url 'profile' %}" class="btn-ghost">Hi, {{ request.user.username }}</a>
+                <a href="{% url 'logout' %}" class="btn-fill">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-fill">Login / Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <div class="accessory-details-page">
+
+            <p class="accessory-breadcrumb">
+                <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp;
+                <a href="{% url 'accessories' %}">Accessories</a> &nbsp;/&nbsp;
+                {{ accessory.name }}
+            </p>
+
+            <section class="accessory-detail-hero">
+                {% if accessory.image %}
+                    <img src="{{ accessory.image.url }}" alt="{{ accessory.name }}" class="accessory-detail-image">
+                {% else %}
+                    <div class="accessory-detail-image-placeholder">{{ accessory.emoji }}</div>
+                {% endif %}
+
+                <div>
+                    <span class="accessory-detail-tag">{{ accessory.get_category_display }}</span>
+                    <h1>{{ accessory.name }}</h1>
+                    <p class="accessory-detail-brand">{{ accessory.brand }}</p>
+                    <p class="accessory-detail-price">₹ {{ accessory.price_display }}</p>
+
+                    {% if accessory.stock > 0 %}
+                        <p class="accessory-detail-stock in">In Stock &middot; {{ accessory.stock }} available</p>
+                    {% else %}
+                        <p class="accessory-detail-stock out">Currently Out of Stock</p>
+                    {% endif %}
+
+                    <p class="accessory-detail-desc">{{ accessory.description|linebreaksbr }}</p>
+
+                    <div class="accessory-detail-actions">
+                        <form method="post" action="{% url 'add_accessory_to_cart' accessory.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn primary-btn" {% if accessory.stock <= 0 %}disabled{% endif %}>
+                                {% if accessory.stock <= 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+                            </button>
+                        </form>
+                        {% if accessory.wishlist_item_id %}
+                        <form method="post" action="{% url 'remove_from_wishlist' accessory.wishlist_item_id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn-ghost">&#9829; Remove from Wishlist</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'add_accessory_to_wishlist' accessory.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn-ghost">&#9825; Add to Wishlist</button>
+                        </form>
+                        {% endif %}
+                        <a href="{% url 'accessories' %}" class="btn-ghost">Back to Accessories</a>
+                    </div>
+                </div>
+            </section>
+
+            {% if related %}
+                <section class="accessory-related">
+                    <h2>More in {{ accessory.get_category_display }}</h2>
+                    <div class="accessory-related-grid">
+                        {% for item in related %}
+                            <div class="product-card prebuild-card">
+                                <a href="{% url 'accessory_details' item.id %}" class="prebuild-card-link">
+                                    {% if item.image %}
+                                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="product-img">
+                                    {% else %}
+                                        <div class="product-img product-img-placeholder">{{ item.emoji }}</div>
+                                    {% endif %}
+                                </a>
+                                <div class="product-info">
+                                    <p class="product-brand">{{ item.brand }}</p>
+                                    <h3 class="product-name">{{ item.name }}</h3>
+                                    <div class="product-footer">
+                                        <span class="product-price">₹ {{ item.price_display }}</span>
+                                        <a href="{% url 'accessory_details' item.id %}" class="btn-ghost product-add-btn">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 BuildWise. All Rights Reserved.</p>
+    </footer>
+
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

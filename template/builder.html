@@ -1,0 +1,200 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PC Builder - BuildWise</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2 L36 11 V29 L20 38 L4 29 V11 Z" stroke="#f7c948" stroke-width="2.5"/>
+                <path d="M20 12 L28 16.5 V25.5 L20 30 L12 25.5 V16.5 Z" fill="#f7c948"/>
+            </svg>
+            <span class="logo-text">Build<span class="accent">Wise</span></span>
+        </a>
+
+        <nav class="nav-pill">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'prebuild' %}">Pre-Build</a>
+            <a href="{% url 'my_configuration' %}">My Configuration</a>
+            <a href="{% url 'accessories' %}">Accessories</a>
+            <a href="{% url 'about' %}">About</a>
+        </nav>
+
+        <div class="nav-auth">
+                        <a href="{% url 'wishlist' %}" class="cart-icon-link" aria-label="View wishlist">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 20.2s-7.2-4.4-9.7-8.9C.7 7.7 2.4 4 6 4c2.1 0 3.5 1.2 4.3 2.3C11.1 5.2 12.5 4 14.6 4c3.6 0 5.3 3.7 3.7 7.3-2.5 4.5-9.7 8.9-9.7 8.9z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {% if wishlist_count %}<span class="cart-badge">{{ wishlist_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'view_cart' %}" class="cart-icon-link" aria-label="View cart">
+                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3h2.2l1 2M5.2 5H21l-2 8H7.4M5.2 5l1.7 8M7.4 13l-.6 2.4A1 1 0 007.7 17H19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9" cy="20" r="1.4" fill="currentColor"/>
+                    <circle cx="18" cy="20" r="1.4" fill="currentColor"/>
+                </svg>
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'order_history' %}" class="btn-ghost">My Orders</a>
+                <a href="{% url 'profile' %}" class="btn-ghost">Hi, {{ request.user.username }}</a>
+                <a href="{% url 'logout' %}" class="btn-fill">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-fill">Login / Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+
+
+    <main>
+
+        <section class="builder-header">
+            <p class="tagline">STEP BY STEP</p>
+            <h1>Build Your <span>Dream PC.</span></h1>
+            <p class="hero-text">
+                Work through each component below. We'll flag anything that
+                doesn't fit with what you've already picked.
+            </p>
+
+            <div class="build-progress">
+                <div class="build-progress-bar">
+                    <div class="build-progress-fill" data-progress="{{ progress_percent }}"></div>
+                </div>
+                <span class="build-progress-label">{{ selected_count }} / {{ total_steps }} components selected</span>
+            </div>
+        </section>
+
+        <section class="builder-layout">
+
+            <div class="builder-steps">
+                {% for step in steps %}
+                <div class="step-card {% if step.product %}step-complete{% endif %}">
+
+                    <div class="step-card-main">
+                        <span class="step-number">{{ forloop.counter }}</span>
+                        <div class="step-card-body">
+                            <h3>{{ step.key }}</h3>
+                            {% if step.product %}
+                            <p class="step-selected-name">{{ step.product.brand }} {{ step.product.name }}</p>
+                            <p class="step-selected-price">₹{{ step.product.price }}</p>
+                            {% else %}
+                            <p class="hero-text step-empty-text">Not selected yet</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="step-card-actions">
+                        {% if step.category %}
+                        <a href="{% url 'products' %}?category={{ step.category.id }}&amp;build=1" class="btn-ghost">
+                            {% if step.product %}Change{% else %}Choose{% endif %}
+                        </a>
+                        {% endif %}
+                        {% if step.product %}
+                        <form method="post" action="{% url 'remove_component' step.key %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-ghost step-remove-btn">Remove</button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <aside class="build-summary">
+                <h2>Build Summary</h2>
+
+                {% if analysis.issues %}
+                <div class="build-alert build-alert-error">
+                    <p class="build-alert-title">&#10005; Compatibility problems</p>
+                    <ul>
+                        {% for issue in analysis.issues %}
+                        <li>{{ issue }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if analysis.warnings %}
+                <div class="build-alert build-alert-warn">
+                    <p class="build-alert-title">&#9888; Worth checking</p>
+                    <ul>
+                        {% for warning in analysis.warnings %}
+                        <li>{{ warning }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if not analysis.issues and not analysis.warnings and selected_count > 0 %}
+                <div class="build-alert build-alert-ok">
+                    <p class="build-alert-title">&#10003; No issues so far</p>
+                </div>
+                {% endif %}
+
+                {% if selected_count == 0 %}
+                <p class="hero-text build-summary-empty">
+                    No components selected yet. Choose a category to get started.
+                </p>
+                {% endif %}
+
+                {% if performance %}
+                <div class="build-summary-row">
+                    <span>Performance score</span>
+                    <span class="build-summary-score">{{ performance }}/100</span>
+                </div>
+                {% endif %}
+
+                {% if selected_count > 0 %}
+                <div class="build-summary-row">
+                    <span>Recommendation</span>
+                    <span class="build-badge build-badge-{{ recommendation_level }}">{{ recommendation }}</span>
+                </div>
+                {% endif %}
+
+                <div class="build-summary-total">
+                    <span>Estimated Total</span>
+                    <span class="build-summary-price">₹{{ analysis.total_price }}</span>
+                </div>
+
+                {% if selected_count > 0 %}
+                <div class="build-summary-buttons">
+                    <form method="post" action="{% url 'add_build_to_cart' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn primary-btn build-summary-btn">Add Selected to Cart</button>
+                    </form>
+                    <form method="post" action="{% url 'reset_build' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-ghost build-summary-btn">Reset Build</button>
+                    </form>
+                </div>
+                {% endif %}
+            </aside>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>© 2026 BuildWise. All Rights Reserved.</p>
+    </footer>
+
+    <script src="{% static 'script.js' %}"></script>
+
+</body>
+</html>
