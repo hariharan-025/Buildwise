@@ -124,3 +124,24 @@ if (accessoryPills.length && accessoryCards.length) {
         });
     });
 }
+// Mobile navbar toggle. Works across every page since each header uses
+// the same ".navbar" / ".nav-toggle" markup and IDs are not required.
+document.querySelectorAll(".navbar").forEach(function (nav) {
+    var toggle = nav.querySelector(".nav-toggle");
+    if (!toggle) return;
+
+    toggle.addEventListener("click", function () {
+        var isOpen = nav.classList.toggle("nav-open");
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    // Close the menu after tapping a nav link, so it doesn't stay open
+    // once the new page loads (relevant if the browser preserves state
+    // via back/forward cache).
+    nav.querySelectorAll(".nav-pill a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            nav.classList.remove("nav-open");
+            toggle.setAttribute("aria-expanded", "false");
+        });
+    });
+});
