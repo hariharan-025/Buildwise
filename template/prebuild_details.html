@@ -109,6 +109,16 @@
         @media (max-width: 720px) {
             .prebuild-detail-hero { grid-template-columns: 1fr; }
         }
+
+        @media (max-width: 480px) {
+            .prebuild-details-page { padding: 1.75rem 1rem 3rem; }
+            .prebuild-detail-hero { gap: 1.5rem; margin-bottom: 1.75rem; }
+            .prebuild-detail-hero h1 { font-size: 1.5rem; }
+            .prebuild-detail-price { font-size: 1.25rem; }
+            .prebuild-detail-actions { flex-direction: column; align-items: stretch; }
+            .prebuild-detail-actions .btn,
+            .prebuild-detail-actions .btn-ghost { width: 100%; justify-content: center; text-align: center; }
+        }
     </style>
 </head>
 <body>

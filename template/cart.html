@@ -91,7 +91,7 @@
 
                             <div class="cart-row-price">₹ {{ item.subtotal|floatformat:0 }}</div>
 
-                            <form method="post"
+                            <form method="post" class="cart-row-remove"
                                   action="{% if item.is_prebuilt %}{% url 'remove_prebuilt_from_cart' item.product.id %}{% elif item.is_accessory %}{% url 'remove_accessory_from_cart' item.product.id %}{% else %}{% url 'remove_from_cart' item.product.id %}{% endif %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn cart-remove-btn">Remove</button>

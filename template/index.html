@@ -129,6 +129,89 @@
 
         </section>
 
+        <!-- Why Choose BuildWise -->
+        <section class="categories">
+
+            <div class="section-heading">
+                <p>WHY BUILDWISE</p>
+                <h2>Built for Confident Buyers</h2>
+            </div>
+
+            <div class="category-grid">
+                <div class="category-card">
+                    <h3>Guided Builder</h3>
+                    <p>Step-by-step component selection with nothing left to guesswork.</p>
+                </div>
+                <div class="category-card">
+                    <h3>Compatibility Checks</h3>
+                    <p>We flag socket, sizing, and power mismatches before checkout.</p>
+                </div>
+                <div class="category-card">
+                    <h3>Performance Insights</h3>
+                    <p>Get an estimated performance score and PSU wattage guidance.</p>
+                </div>
+                <div class="category-card">
+                    <h3>Everything In One Place</h3>
+                    <p>Components, pre-built PCs, and accessories — all under one roof.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Feature Highlights -->
+        <section class="home-promos">
+
+            <div class="promo-banner">
+                <div class="promo-banner-visual" aria-hidden="true">🛠</div>
+                <div class="promo-banner-content">
+                    <p class="tagline">PC BUILDER</p>
+                    <h3>Build Your PC, Step by Step</h3>
+                    <p>
+                        Pick a CPU, motherboard, GPU, and more with live compatibility
+                        checks and a running performance score — no research required.
+                    </p>
+                    <a href="{% url 'builder' %}" class="btn primary-btn">Start Building</a>
+                </div>
+            </div>
+
+            <div class="promo-banner reverse">
+                <div class="promo-banner-visual" aria-hidden="true">🖥</div>
+                <div class="promo-banner-content">
+                    <p class="tagline">PRE-BUILT PCs</p>
+                    <h3>Not in the Mood to Build?</h3>
+                    <p>
+                        Choose from ready-made builds for gaming, content creation,
+                        AI/ML workloads, and everyday use — shipped complete.
+                    </p>
+                    <a href="{% url 'prebuild' %}" class="btn primary-btn">Browse Pre-Builds</a>
+                </div>
+            </div>
+
+            <div class="promo-banner">
+                <div class="promo-banner-visual" aria-hidden="true">🎧</div>
+                <div class="promo-banner-content">
+                    <p class="tagline">ACCESSORIES</p>
+                    <h3>Finish the Setup</h3>
+                    <p>
+                        Keyboards, mice, monitors, headsets, and more to complete
+                        your desk once the build is done.
+                    </p>
+                    <a href="{% url 'accessories' %}" class="btn primary-btn">Shop Accessories</a>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Call To Action -->
+        <section class="cta-section">
+            <h2>Ready to Build Your <span class="accent-text" style="color: var(--accent);">Dream PC?</span></h2>
+            <p>Jump into the builder and see real-time compatibility and pricing as you go.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'builder' %}" class="btn primary-btn">Build Now</a>
+                <a href="{% url 'about' %}" class="btn-ghost">Learn More</a>
+            </div>
+        </section>
+
     </main>
     <!-- Footer -->
     <footer>

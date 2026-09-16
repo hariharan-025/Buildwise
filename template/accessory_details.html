@@ -89,6 +89,16 @@
         @media (max-width: 720px) {
             .accessory-detail-hero { grid-template-columns: 1fr; }
         }
+
+        @media (max-width: 480px) {
+            .accessory-details-page { padding: 1.75rem 1rem 3rem; }
+            .accessory-detail-hero { gap: 1.5rem; margin-bottom: 1.75rem; }
+            .accessory-detail-hero h1 { font-size: 1.5rem; }
+            .accessory-detail-price { font-size: 1.25rem; }
+            .accessory-detail-actions { flex-direction: column; align-items: stretch; }
+            .accessory-detail-actions .btn,
+            .accessory-detail-actions .btn-ghost { width: 100%; justify-content: center; text-align: center; }
+        }
     </style>
 </head>
 <body>
