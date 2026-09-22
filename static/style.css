@@ -24,7 +24,6 @@
 html {
     overflow-x: hidden;
     width: 100%;
-    scroll-behavior: smooth;
 }
 
 body {
@@ -179,30 +178,37 @@ a {
     justify-content: space-between;
     gap: 40px;
     padding: 90px 6%;
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 0;
     overflow: hidden;
 }
 
+/* The hero is pinned (position: sticky) so the video reads as a fixed
+   backdrop rather than scrolling away with the page. The sections
+   right after it (see "Categories" below) are given their own solid
+   background + stacking context so they slide up and fully cover the
+   pinned hero once the user scrolls past it -- no video bleed-through
+   further down the page. */
 .hero-bg-video {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
     object-fit: cover;
-    z-index: -2;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .hero-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
     background: rgba(10, 10, 10, 0.55);
-    z-index: -1;
+    z-index: 1;
 }
 
 .hero-content {
@@ -311,9 +317,9 @@ a {
 
 .categories {
     padding: 90px 6%;
-    background: var(--bg);
     position: relative;
     z-index: 1;
+    background: var(--bg);
 }
 
 .section-heading p {
@@ -371,9 +377,6 @@ footer {
     text-align: center;
     color: #666;
     border-top: 1px solid var(--border);
-    background: var(--bg);
-    position: relative;
-    z-index: 1;
 }
 
 
@@ -2145,6 +2148,47 @@ footer {
     padding: 40px 0;
 }
 
+/* Laptop range (roughly 13-15in screens, ~1024-1300px). Without this
+   step the carousel jumped straight from the full desktop sizing
+   (60px padding, 280px visual) to the 900px stacked layout, so on a
+   laptop window the slide content and image were cramped/clipped
+   and the carousel didn't read as "full" — this scales it down
+   smoothly while keeping the two-column layout. */
+@media (max-width: 1300px) {
+
+    .prebuild-slide {
+        padding: 44px 36px;
+        gap: 28px;
+    }
+
+    .prebuild-visual-placeholder {
+        height: 230px;
+    }
+
+    .prebuild-slide-content h2 {
+        font-size: 25px;
+        margin: 10px 0 12px;
+    }
+
+    .prebuild-slide-content .hero-text {
+        font-size: 15px;
+    }
+
+    .prebuild-slide-footer {
+        margin-top: 18px;
+        gap: 14px;
+    }
+
+    .prebuild-nav {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+    }
+
+    .prebuild-prev { left: 14px; }
+    .prebuild-next { right: 14px; }
+}
+
 @media (max-width: 900px) {
 
     .prebuild-slide {
@@ -2266,26 +2310,30 @@ footer {
     display: block;
 }
 
+@media (max-width: 1300px) {
+    .prebuild-visual {
+        height: 230px;
+    }
+}
+
 @media (max-width: 900px) {
     .prebuild-visual {
         flex-basis: 100%;
         width: 100%;
         max-width: 100%;
-        height: auto;
-        /* A taller, proportional box (instead of a short fixed height)
-           so the image fills the frame the same cinematic "cover" way
-           it does on laptop, without cutting off the top/bottom of
-           the subject the way a squat fixed-height crop did. */
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
+        height: 220px;
+        /* Switch from "cover" to "contain" on mobile so the full
+           image is always visible instead of being cropped/zoomed —
+           desktop keeps the cinematic "cover" look untouched. */
+        object-fit: contain;
+        background: var(--bg-alt);
+        padding: 8px;
     }
 }
 
 @media (max-width: 480px) {
     .prebuild-visual {
-        /* Slightly taller ratio on small phones — less gets cropped
-           off vertically on very narrow screens. */
-        aspect-ratio: 4 / 3;
+        height: 170px;
     }
 }
 .wishlist-row-actions {
@@ -2488,9 +2536,9 @@ footer {
     display: flex;
     flex-direction: column;
     gap: 26px;
-    background: var(--bg);
     position: relative;
     z-index: 1;
+    background: var(--bg);
 }
 
 .promo-banner {
@@ -2546,8 +2594,7 @@ footer {
 
 .cta-section {
     margin: 0 6% 90px;
-    background-color: var(--bg);
-    background-image: linear-gradient(135deg, var(--accent-dim), transparent);
+    background: linear-gradient(135deg, var(--accent-dim), transparent);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 70px 40px;
@@ -2637,4 +2684,30 @@ footer {
     .cta-section p {
         font-size: 14px;
     }
+}
+
+.auth-section {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate; /* keeps stacking context contained to this section */
+}
+
+.auth-section .hero-bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.auth-section .hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.auth-section .auth-card {
+    position: relative;
+    z-index: 2;
 }
